@@ -40,7 +40,8 @@ class MonitoringModel(BehaviorModelExecutor):
         if self._cur_state == "MONIT":
             
             try : 
-                subprocess.check_output(['pgrep', '-f' , self.target_process])
+                process = subprocess.check_output(['pgrep', '-f' , self.target_process])
+                #print(int(process))
                 state = 'Is Running'
                 self.time_count += 1
                 
@@ -52,13 +53,13 @@ class MonitoringModel(BehaviorModelExecutor):
             
             if self.time_count == TIMEOUT:
                 print(f'Timeout!!!')
-                self.process_kill(self.target_process)
+                self.process_kill(int(process))
                 self._cur_state = "IDLE"
         
     def process_kill(self, process):
         try:
-            subprocess.run('pkill', '-f', process)
-            print(f'{process} is Deleted')
+            subprocess.run(['kill', str(process)])
+            print(f'{self.target_process} is Deleted')
             
         except:
             print("Simulation is Not Running")
